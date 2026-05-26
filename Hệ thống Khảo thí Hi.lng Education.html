@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Khảo Thí Đánh Giá Năng Lực — Hi.lng Education</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #0b3c5d;
+            --secondary-color: #328cc1;
+            --accent-color: #d9b310;
+            --dark-color: #1d2731;
+            --light-bg: #f5f7fa;
+            --white: #ffffff;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --gray-border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; user-select: none; }
+        body { background-color: var(--light-bg); color: var(--dark-color); overflow-x: hidden; }
+        @media print { body { display: none !important; } }
+
+        /* AUTH SCREEN */
+        .auth-container { max-width: 520px; margin: 50px auto; background: var(--white); padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-top: 5px solid var(--primary-color); }
+        .logo-header { text-align: center; margin-bottom: 25px; }
+        .logo-header h1 { font-size: 13px; color: #718096; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .logo-header h2 { font-size: 19px; color: var(--primary-color); margin-top: 5px; font-weight: 700; }
+        .logo-header .brand { color: var(--secondary-color); font-size: 14px; font-weight: 600; margin-top: 3px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--gray-border); border-radius: 6px; font-size: 15px; transition: all 0.3s; }
+        .form-group input:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 0 3px rgba(50, 140, 193, 0.2); }
+        .rules-box { background: #fffaf0; border: 1px solid #feebc8; padding: 15px; border-radius: 6px; margin-bottom: 25px; font-size: 13px; color: #744210; line-height: 1.6; }
+        .btn-start { width: 100%; background: var(--primary-color); color: var(--white); padding: 14px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; }
+        .btn-start:hover { background: var(--secondary-color); }
+        .footer-copyright { text-align: center; margin-top: 20px; font-size: 12px; color: #a0aec0; }
+
+        /* EXAM INTERFACE */
+        #exam-interface { display: none; height: 100vh; grid-template-rows: 70px 1fr; }
+        .top-bar { background: var(--primary-color); color: var(--white); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .exam-title-box h3 { font-size: 15px; font-weight: 600; }
+        .exam-title-box p { font-size: 12px; opacity: 0.8; }
+        .user-meta { display: flex; align-items: center; gap: 25px; }
+        .timer-box { background: rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.2); }
+        
+        .exam-workspace { display: grid; grid-template-columns: 1fr 340px; height: calc(100vh - 70px); overflow: hidden; }
+        .questions-pane { padding: 30px; overflow-y: auto; scroll-behavior: smooth; }
+        .section-header { background: var(--white); padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid var(--secondary-color); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .section-header h4 { color: var(--primary-color); font-size: 16px; text-transform: uppercase; }
+        .section-header p { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+        .question-card { background: var(--white); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); border: 1px solid var(--gray-border); }
+        .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed var(--gray-border); padding-bottom: 10px; font-weight: 700; color: var(--primary-color); }
+        .q-context { font-size: 14.5px; line-height: 1.6; margin-bottom: 20px; color: #334155; text-align: justify; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--gray-border); white-space: pre-line; }
+        
+        .essay-group { margin-top: 15px; }
+        .essay-label { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #475569; display: block; line-height: 1.5; }
+        .essay-input { width: 100%; height: 90px; padding: 12px; border: 1px solid var(--gray-border); border-radius: 6px; font-size: 14.5px; resize: vertical; margin-bottom: 15px; }
+        .essay-input:focus { outline: none; border-color: var(--secondary-color); }
+        .essay-large { height: 220px; }
+        
+        .radio-option { display: block; margin-bottom: 8px; padding: 10px 12px; border: 1px solid var(--gray-border); border-radius: 6px; cursor: pointer; transition: background 0.2s; font-size: 14px; }
+        .radio-option:hover { background: #f8fafc; }
+        .radio-option input { margin-right: 8px; }
+
+        .sidebar-pane { background: var(--white); border-left: 1px solid var(--gray-border); display: flex; flex-direction: column; overflow: hidden; }
+        .sidebar-section { padding: 18px; border-bottom: 1px solid var(--gray-border); }
+        .sidebar-title { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .nav-item { aspect-ratio: 1; border: 1px solid var(--gray-border); border-radius: 6px; background: #f8fafc; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; }
+        .nav-item.answered { background: #e0f2fe; border-color: #0284c7; color: #0369a1; }
+        
+        .scratchpad-area { width: 100%; height: 100px; padding: 10px; border: 1px solid var(--gray-border); border-radius: 6px; resize: none; font-size: 13px; background: #fcfcfc; }
+        .progress-container { margin-top: auto; padding: 18px; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+        .progress-bar-bg { width: 100%; height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; margin-bottom: 15px; }
+        .progress-bar-fill { width: 0%; height: 100%; background: var(--success); transition: width 0.3s ease; }
+        .btn-submit { width: 100%; background: var(--danger); color: var(--white); padding: 14px; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* FINISH SCREEN */
+        #finish-screen { display: none; width: 100vw; min-height: 100vh; background-color: var(--light-bg); padding: 60px 20px; box-sizing: border-box; }
+        .finish-container { max-width: 600px; margin: 40px auto; background: var(--white); padding: 50px 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; border-top: 5px solid var(--success); }
+        .finish-icon { font-size: 65px; color: var(--success); margin-bottom: 22px; }
+        .finish-container h2 { color: var(--dark-color); font-size: 24px; font-weight: 700; margin-bottom: 15px; }
+        .finish-info-box { background: #f8fafc; border: 1px solid var(--gray-border); padding: 20px; border-radius: 8px; margin: 25px 0; text-align: left; }
+        .finish-info-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #e2e8f0; font-size: 14.5px; }
+        .finish-info-line:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+    <div id="auth-screen">
+        <div class="auth-container">
+            <div class="logo-header">
+                <svg width="90" height="90" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 12px;">
+                    <circle cx="100" cy="100" r="95" fill="#ffffff" stroke="#0b3c5d" stroke-width="4"/>
+                    <circle cx="100" cy="100" r="88" fill="none" stroke="#328cc1" stroke-width="1.5" stroke-dasharray="5,3"/>
+                    <path d="M70,55 C100,45 100,45 130,55 C130,100 120,135 100,155 C80,135 70,100 70,55 Z" fill="#0b3c5d"/>
+                    <path d="M100,70 L106,85 L121,85 L109,94 L113,109 L100,100 L87,109 L91,94 L79,85 L94,85 Z" fill="#d9b310"/>
+                    <path d="M52,110 Q50,145 75,165 Q100,172 100,172" fill="none" stroke="#328cc1" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M148,110 Q150,145 125,165 Q100,172 100,172" fill="none" stroke="#328cc1" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="53" cy="118" r="4" fill="#328cc1"/><circle cx="58" cy="133" r="4" fill="#328cc1"/><circle cx="68" cy="148" r="4" fill="#328cc1"/>
+                    <circle cx="147" cy="118" r="4" fill="#328cc1"/><circle cx="142" cy="133" r="4" fill="#328cc1"/><circle cx="132" cy="148" r="4" fill="#328cc1"/>
+                </svg>
+                <h1>SỞ GIÁO DỤC VÀ ĐÀO TẠO THÀNH PHỐ HỒ CHÍ MINH</h1>
+                <h2>KỲ THI ĐÁNH GIÁ NĂNG LỰC - KHÓA HÈ</h2>
+                <div class="brand">Hệ thống khảo thí trực tuyến • Hi.lng Education</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="student-name">Họ và tên thí sinh:</label>
+                <input type="text" id="student-name" placeholder="Nhập đầy đủ họ và tên của thí sinh..." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="student-sbd">Số báo danh (SBD):</label>
+                <input type="text" id="student-sbd" placeholder="Nhập số báo danh chính thức | VD: DGNLKH001..." required>
+            </div>
+
+            <div class="rules-box">
+                <strong><i class="fas fa-shield-alt"></i> QUY CHẾ BẢO MẬT AN NINH PHÒNG THI:</strong><br>
+                - Hệ thống tự động kích hoạt chế độ toàn màn hình khi vào thi.<br>
+                - Hành vi cố ý thoát toàn màn hình (nhấn Esc) sẽ bị tính là vi phạm kỷ luật.<br>
+                - Vi phạm quá 3 lần, bài thi lập tức bị khóa và tự động nộp về dữ liệu trung tâm.
+            </div>
+
+            <button class="btn-start" onclick="initializeExam()"><i class="fas fa-sign-in-alt"></i> BẮT ĐẦU LÀM BÀI THI</button>
+            <div class="footer-copyright">© 2026 Hi.lng Education. All rights Reserved.</div>
+        </div>
+    </div>
+
+    <div id="exam-interface">
+        <div class="top-bar">
+            <div class="exam-title-box">
+                <h3>BÀI THI: TỔ HỢP KHOA HỌC XÃ HỘI</h3>
+                <p>SỞ GD-ĐT TP. HỒ CHÍ MINH — HỘI ĐỒNG KHẢO THÍ HI.LNG EDUCATION</p>
+            </div>
+            <div class="user-meta">
+                <div style="text-align: right;">
+                    <span id="display-name" style="font-weight:600; display:block;">Thí sinh: ---</span>
+                    <span id="display-sbd" style="font-size:12px; opacity:0.8;">SBD: ---</span>
+                </div>
+                <div class="timer-box" id="exam-timer">
+                    <i class="far fa-clock"></i> <span id="timer-string">150:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-workspace">
+            <div class="questions-pane" id="dynamic-questions-area"></div>
+
+            <div class="sidebar-pane">
+                <div class="sidebar-section">
+                    <div class="sidebar-title"><i class="fas fa-th"></i> BẢNG MỤC LỤC CÂU HỎI</div>
+                    <div class="nav-grid" id="dynamic-nav-grid"></div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title"><i class="fas fa-sticky-note"></i> GIẤY NHÁP ĐIỆN TỬ</div>
+                    <textarea class="scratchpad-area" placeholder="Thí sinh ghi chú nháp trong khu vực này..."></textarea>
+                </div>
+
+                <div class="sidebar-section" style="background: #fff5f5; border-radius: 6px; border: 1px solid #fed7d7;">
+                    <div class="sidebar-title" style="color:#c53030;"><i class="fas fa-shield-alt"></i> GIÁM SÁT AN NINH PHÒNG THI</div>
+                    <div style="font-size: 13px; line-height: 1.6;">
+                        <span style="color:#4a5568;">Bảo mật phòng thi:</span> <span id="security-status" style="color:var(--success); font-weight:600;"><i class="fas fa-user-lock"></i> Đang bật (On)</span><br>
+                        <span style="color:#4a5568; font-weight: 600;">Số lần vi phạm/thoát ứng dụng:</span> <span id="cheat-count" style="color:var(--danger); font-size:15px; font-weight:800;">0 / 3</span>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Tiến độ bài làm:</span>
+                        <span id="progress-text">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progress-bar"></div>
+                    </div>
+                    <button class="btn-submit" id="submit-btn-el" onclick="confirmSubmit()"><i class="fas fa-cloud-upload-alt"></i> NỘP BÀI LÊN HỆ THỐNG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="finish-screen">
+        <div class="finish-container" id="finish-box"></div>
+    </div>
+
+    <script>
+        // CẤU HÌNH ĐƯỜNG DẪN WEB APP GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw6edNz_npOddltfC2Wel5mpxRpSvl0L2z8fw6Are3wBuIi3J0Tay6f0QyOsfkw40Kw/exec"; 
+
+const CONFIG_CARDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; 
+const TOTAL_ITEMS = CONFIG_CARDS.length; 
+
+let examSessionData = {
+    studentName: "",
+    studentSbd: "",
+    answersLog: {},
+    cheatViolations: 0
+};
+let timerInterval = null;
+let totalSecondsLeft = 150 * 60;
+let isExamActive = false;
+let isSystemAction = false; 
+let isRecovering = false; // Cờ chống tính trùng lỗi khi đang khôi phục màn hình
+
+function renderUnifiedExam() {
+    return `
+        <div class="section-header">
+            <h4>PHẦN A. NGỮ VĂN</h4>
+            <p>Hướng dẫn: PHẦN A có 3 đoạn trích lớn. Thí sinh lần lượt trả lời các câu hỏi đọc hiểu trong 3 đoạn trích (mỗi đoạn trích có 3 câu hỏi). Sau đó, ở đoạn trích thứ tư, thí sinh viết một đoạn văn theo yêu cầu.</p>
+        </div>
+
+        <div class="question-card" id="qcard-1">
+            <div class="q-header">ĐOẠN TRÍCH SỐ 1:</div>
+            <div class="q-context">(1) Nụ cười là phương thuốc quý giá nhất. Từ lâu các nhà nghiên cứu đã chứng minh được rằng khi chúng ta cười, bộ não sẽ tiết ra chất endorphins có tác dụng làm giảm cơn đau, tăng cường sự lanh lợi, hoạt bát, đồng thời mang đến cho chúng ta cảm giác phấn khởi và vui vẻ.
+(2) Cuộc sống ngày nay của chúng ta phải đối mặt với rất nhiều thử thách, từ khó khăn kinh tế cho đến những xung đột sắc tộc, khủng bố; từ ô nhiễm môi trường đến dịch bệnh. Vì thế chúng ta rất cần tiếng cười để tâm hồn được thanh thản, tinh thần được thư thái và giảm bớt áp lực từ những toan tính đời thường.
+(3) Bạn có thể vượt qua những khúc quanh của cuộc đời mình dễ dàng hơn bằng cách mỉm cười với chúng. Không những thế bạn hãy mỉm cười với chính mình và với mọi người. Khi bạn biết mang nụ cười đến những người chung quanh, có nghĩa là bạn đã mang niềm tin đến cuộc sống của họ. Nhờ đó, chúng ta đều cảm thấy được chia sẻ, được động viên và khích lệ.
+(4) Trong nhiều nền văn hóa khác nhau, sự hài hước là phương thức tốt nhất để chữa lành mọi nỗi đau. Dù giàu có hay mạnh khỏe, ai cũng trải qua ít nhiều đau khổ trong đời. Mức độ thăng trầm trong cuộc sống tùy thuộc vào từng hoàn cảnh cụ thể và tùy thuộc vào sự biến đổi thời cuộc ở quanh ta. Tiếng cười làm giảm bớt nỗi đau và sự sợ hãi. Thật vậy, các danh hài tuyệt vời nhất nổi tiếng nhất trên thế giới, phần lớn đều xuất thân và trưởng thành trong hoàn cảnh rất khó khăn. Phải chăng, sự hài hước chính là cơ chế chịu đựng đau khổ mà tạo hóa ban tặng cho mỗi người chúng ta? Hãy nhớ rằng, khi nghĩ về những điều vui vẻ, bạn sẽ cảm thấy mình hạnh phúc, mọi người sẽ thích thú khi ở bên bạn và những mối quan hệ hiện tại của bạn cũng sẽ được cải thiện tốt hơn.
+(Dẫn theo Cho đi là còn mãi, Azim Jamal & Harvey McKinnon, Huế Phượng dịch, NXB Tổng hợp TP Hồ Chí Minh, 2023, tr.60-62)</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Câu 1:</strong> Tìm và giải thích nghĩa một từ Hán Việt có trong câu sau: "Thật vậy, các danh hài tuyệt vời nhất nổi tiếng nhất trên thế giới, phần lớn đều xuất thân và trưởng thành trong hoàn cảnh rất khó khăn."</label>
+                <textarea class="essay-input" name="van_dt1_c1" oninput="trackInput(1, this)"></textarea>
+                <label class="essay-label"><strong>Câu 2:</strong> Theo tác giả, tiếng cười mang đến những lợi ích gì?</label>
+                <textarea class="essay-input" name="van_dt1_c2" oninput="trackInput(1, this)"></textarea>
+                <label class="essay-label"><strong>Câu 3:</strong> Chỉ ra một bằng chứng được người viết sử dụng trong văn bản. Nêu tác dụng.</label>
+                <textarea class="essay-input" name="van_dt1_c3" oninput="trackInput(1, this)"></textarea>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-2">
+            <div class="q-header">ĐOẠN TRÍCH SỐ 2:</div>
+            <div class="q-context"><strong>CÁCH ƯỚP TRÀ SEN TRUYỀN THỐNG – GIỮ NGUYÊN VẸN TINH HOA TRÀ VIỆT</strong>
+Trà sen được biết đến là một trong những loại trà có từ lâu đời, là đại diện cho các loại trà Việt. Trà sen không đơn giản chỉ là một loại trà dùng để uống mà ẩn sau đó là triết lý nhân sinh cao quý, là nhân cách thanh cao của người Việt, thể hiện lòng tôn kính, thiêng liêng. Trà sen có hương thơm thoang thoảng, nhẹ nhàng với vị ngọt hậu, đắng nhẹ nơi đầu lưỡi. Loại trà này được xem như là báu vật của người Việt mà bất kỳ một “ẩm khách” nào cũng muốn được một lần thưởng thức. Thế nhưng, không phải ai cũng biết cách ướp trà sen ngon.
+Tại sao gọi là trà sen ướp xổi và cách ướp trà sen này như thế nào? Gọi là trà sen ướp xổi bởi vì cách ướp trà sen này được thực hiện khá nhanh và trà chỉ có thể uống được trong thời gian ngắn, nếu trà để lâu sẽ rất dễ bị hỏng.
+<strong>Chọn trà để ướp</strong>
+Để có được trà sen ướp xổi ngon thì bạn nên chọn loại chè Shan Tuyết (Hà Giang). Đây là loại chè được đánh giá là ngon nhất, được hái từ những cây chè có tuổi đời hàng trăm, hàng nghìn năm. Những búp chè tươi được hái vào buổi sớm, sau đó sẽ được chế biến theo phương pháp thủ công của người Mông. Ngoài ra, bạn cũng có thể sử dụng trà Bạch Hạc (Thái Nguyên) để ướp trà sen.
+
+Cách ướp trà sen xổi (Ảnh: Internet)
+
+<strong>Chọn sen để ướp trà</strong>
+Nước ta có rất nhiều vùng trồng sen nhưng không phải sen nào cũng có thể sử dụng để ướp trà. Loại sen chuẩn nhất được lựa chọn để ướp trà là sen Tây Hồ. Hoa sen này còn được gọi là sen trăm cánh do có nhiều cánh nhỏ được xếp trong bông sen. Hơn nữa, sen Tây Hồ cũng được đánh giá là loại sen có hương thơm đượm hơn so với sen ở nhiều vùng khác. Với cách ướp trà sen xổi này, bạn nên chọn những bông sen mới được hái, mùi hương đượm, cánh hoa mới hé nở, còn nguyên vẹn, không bị dập.
+Sau khi chuẩn bị đủ nguyên liệu, bạn cần tiến hành ướp trà ngay để giữ nguyên vẹn mùi hương của sen.</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Câu 1:</strong> Nội dung chính của văn bản Cách ướp trà sen truyền thống – Giữ nguyên vẹn tinh hoa trà Việt là gì?</label>
+                <textarea class="essay-input" name="van_dt2_c1" oninput="trackInput(2, this)"></textarea>
+                <label class="essay-label" style="margin-top:10px;"><strong>Câu 2:</strong> Văn bản viết ra nhằm mục đích gì?</label>
+                <textarea class="essay-input" name="van_dt2_c2" oninput="trackInput(2, this)"></textarea>
+                <label class="essay-label" style="margin-top:10px;"><strong>Câu 3:</strong> Vì sao trà sen ướp xổi không để được lâu?</label>
+                <textarea class="essay-input" name="van_dt2_c3" oninput="trackInput(2, this)"></textarea>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-3">
+            <div class="q-header">ĐOẠN TRÍCH SỐ 3:</div>
+            <div class="q-context">Rồi cả Peter Gilles và tôi lên tiếng xin Raphael tiên sinh cho nghe chuyện. Thấy chúng tôi thực lòng, tiên sinh bèn để một lúc để sắp xếp câu chuyện trong đầu, rồi bắt đầu kể như sau:
+RAPHAEL: Ta bắt đầu nhé. Hòn đảo ấy rộng nhất ở quãng giữa, chừng hai trăm dặm từ bờ này sang bờ kia. Những chỗ khác cũng chẳng hẹp hơn là bao, chỉ trừ hai đầu là thu hẹp dần và lượn vòng như thể vẽ bằng com-pa, đến nổi toàn bộ đảo thành ra như một vòng tròn có đường kính khoảng năm trăm dặm vậy. Đúng hơn hãy mường tượng nó như một hình lưỡi liềm rất cong có hai mõm chóp chỉ cách nhau bởi một eo biển rộng xấp xỉ mười một dặm. Biển tràn vào trong lòng đảo qua eo này, làm thành một vùng hồ mênh mông giữa đảo. Được bao bọc khắp xung quanh, nước hồ lúc nào cũng êm ả. Vậy là cái vịnh yên tĩnh ngay giữa lòng đảo ấy trở thành một hải cảng lớn rất thuận tiện, thuyền bè có thể dong buồm ngang dọc trên đó theo đủ mọi hướng.
+Bệnh nhân trong bệnh viện mới là những người được ưu tiên hàng đầu – thưa vâng, có bốn bệnh viện ở ngoại ô, ngay bên ngoài tường bao của thành phố. Mỗi bệnh viện lớn bằng khoảng một thành phố nhỏ. Ý tưởng là vừa tránh cho bệnh viện bị quả tải, vừa tạo điều kiện tốt cho việc cách ly những chứng bệnh lây lan truyền nhiễm. Những bệnh viện này được quản lí rất chu đáo, luôn đầy đủ thuốc men và thiết bị, với những đội ngũ bác sĩ và hộ lí xứng đáng là “lương y kiêm từ mẫu” đến nỗi hễ ốm đau là ai cũng muốn vào bệnh viện chữ không muốn nằm nhà.
+Nhà trẻ là một phòng riêng cho các bà mẹ đang còn cho con bú, lúc nào cũng đầy đủ lò sưởi và nước sạch. Trong phòng có nhiều nôi để các bà mẹ có thể đặt con ngủ. Họ cũng có thể cởi hết áo quần cho con và để chúng chơi đùa quanh lò sưởi. Trẻ con đều được bú mẹ. Nếu người mẹ bị ốm hoặc qua đời, bà vợ ông Trưởng phường lập tức có biện pháp tìm một vú nuôi cho đứa trẻ. Việc này không khó, vì người phụ nữ nào có thể làm vú cũng đều sẵn sàng xung phong cho việc đó. Bạn thấy đấy, cử chỉ hiền mẫu ấy ở đâu cũng được khâm phục và bản thân đứa trẻ cũng sẽ luôn luôn coi mẹ vú của nó như mẹ đẻ vậy.
+Chế độ Utopia không chỉ chú trọng ngăn ngừa phạm tội mà còn khuyến khích thúc đẩy cải thiện bằng nhiều cách vinh danh những người tốt việc tốt. Ví dụ, họ cho dựng tượng ở những nơi công cộng của những người đã có những đóng góp xuất sắc cho cộng đồng, phần để ghi nhớ những thành quả của họ, phần để khích lệ các thế hệ sau hãy cố gắng hơn khi tưởng niệm những vinh quang của tiên nhân.
+(Thomas More, Utopia – Địa đàng trần gian, Trịnh Lữ dịch, NXB Hội nhà văn, 2018)</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Câu 1:</strong> Vì sao đất nước Utopia lại được xem như một thiên đường cho con người?</label>
+                <textarea class="essay-input" name="van_dt3_c1" oninput="trackInput(3, this)"></textarea>
+                <label class="essay-label" style="margin-top:10px;"><strong>Câu 2:</strong> Theo em, viết về một cuộc sống lí tưởng như Utopia, nhà văn Thomas More muốn bày tỏ điều gì?</label>
+                <textarea class="essay-input" name="van_dt3_c2" oninput="trackInput(3, this)"></textarea>
+                <label class="essay-label" style="margin-top:10px;"><strong>Câu 3:</strong> Theo em, viết về một xã hội lí tưởng như Utopia, tác giả muốn thể hiện điều gì?</label>
+                <textarea class="essay-input" name="van_dt3_c3" oninput="trackInput(3, this)"></textarea>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-4">
+            <div class="q-header">ĐOẠN TRÍCH SỐ 4:</div>
+            <div class="q-context" style="text-align: center; font-style: italic;"><strong>ĐƯA CON ĐI HỌC</strong> 
+<strong>(Tế Hanh)</strong>
+Sáng nay mùa thu sang
+Cha đưa con đi học
+Sương đọng cỏ bên đường
+Nắng lên ngời hạt ngọc
+
+Lúa đang thì ngậm sữa
+Xanh mướt cao ngập đầu
+Con nhìn quanh bỡ ngỡ
+Sao chẳng thấy trường đâu?
+
+Hương lúa toả bao la
+Như hương thơm đất nước
+Con ơi đi với cha
+Trường của con phía trước
+                             Thu 1964
+                          (In trong Khúc ca mới, NXB Văn học)
+</div>
+            <div class="essay-group">
+                <label class="essay-label"> Hãy viết một đoạn văn <strong>khoảng 200 chữ</strong> nêu lên tâm tư, cảm xúc, suy nghĩ của em về bài thơ "Đưa con đi học" của nhà thơ Tế Hanh.</label>
+                <textarea class="essay-input essay-large" name="van_essay_long" placeholder="Bắt đầu viết tại đây..." oninput="trackInput(4, this)"></textarea>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 50px; border-left-color: #d9b310;">
+            <h4>PHẦN B. TIẾNG ANH</h4>
+            <p>Hướng dẫn: PHẦN B có 2 văn bản. Thí sinh thực hiện các yêu cầu trong 2 văn bản.</p>
+        </div>
+
+            <div class="q-header">PASSAGE 1: WHAT WOULD YOUTH BE LIKE WITHOUT DREAMS?</div>
+            <div class="q-context">It is true that youth is a time of big dreams, passion, and a love for adventure and discovery. However, young people often lack clear goals or plans for their future. They usually say to each other: “Live youth to the fullest, why hesitate?” but they play too hard and end up in failure. They enjoy themselves so much that they later realize they have not defined what they really need or what they should do, and then they feel deep regret. Alternatively, we might be very excited about something at first, but we are not patient enough to keep going and easily give up as soon as difficulties appear. Therefore, you should go out and look for your true dream. That exact dream will be the motivation that pushes you to overcome all obstacles and hardships in life. When you clearly define your dream, you will realize that nothing is impossible as long as you have faith and make enough effort.
+You might think that my words are boring, but please calm your mind and think deeply: are they really boring, or is it just because you do not truly care about your dream? As for me, I always consider a dream as a “spice” in life. To get that special spice, you will feel really tired and must try your best with a burning desire. But when you actually hold that spice in your hands, life will probably become sweeter and more complete. As the old saying goes: “If the soup is bland, we can add salt or MSG; but to make it truly flavorful, there is only one secret ingredient.”
+Adapted from: “What would youth be like without dreams?” by Hoang Thi Hai Ninh (via caybuttre.vn)</div>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-5">
+            <div class="q-header">PART 1: READING COMPREHENSION QUESTIONS</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Task:</strong> Read the text and choose the correct answer or fill in the blank with NO MORE THAN THREE WORDS.</label>
+                <label class="essay-label"><strong>1.</strong> According to the first paragraph, what is the ironical problem of young people?</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.1_q1" value="A" onchange="trackRadio(5, this)"> A. They have too much adventure but no passion.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.1_q1" value="B" onchange="trackRadio(5, this)"> B. They possess great ambitions but lack specific future plans.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.1_q1" value="C" onchange="trackRadio(5, this)"> C. They always hesitate to live their youth to the fullest.</label>
+
+                <label class="essay-label" style="margin-top:15px;"><strong>2.</strong> What emotional state do young people often experience after “playing too hard” without defining their needs?</label>
+                <input type="text" class="essay-input" style="height:45px;" name="eng_p1.1_q2" oninput="trackInput(5, this)">
+
+                <label class="essay-label"><strong>3.</strong> According to the author, a true dream serves as the ______________ that assists people in overcoming life's challenges.</label>
+                <input type="text" class="essay-input" style="height:45px;" name="eng_p1.1_q3" oninput="trackInput(5, this)">
+
+                <label class="essay-label"><strong>4.</strong> Why does the author use the metaphor of "the soup" at the end of the passage?</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.1_q4" value="A" onchange="trackRadio(5, this)"> A. To prove that cooking skills are necessary for young people.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.1_q4" value="B" onchange="trackRadio(5, this)"> B. To show that temporary solutions like salt and MSG are better than a dream.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.1_q4" value="C" onchange="trackRadio(5, this)"> C. To emphasize that a true dream is the unique element that makes life meaningful and complete.</label>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-6">
+            <div class="q-header">PART 2: SYNOMIC CONTEXTUAL MATCHING</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Task:</strong> Choose the word (A, B, or C) that has the CLOSEST meaning to the underlined word/phrase in each sentence. All sentences are adapted from the core ideas of the text.</label>
+                <label class="essay-label"><strong>1.</strong> Youth is undeniably a beautiful time filled with grand <strong>ambitions</strong> and endless energy.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q1" value="A" onchange="trackRadio(6, this)"> A. difficulties</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q1" value="B" onchange="trackRadio(6, this)"> B. goals and desires</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q1" value="C" onchange="trackRadio(6, this)"> C. temporary pleasures</label>
+
+                <label class="essay-label"><strong>2.</strong> Many young individuals fail to achieve success because they are not <strong>patient</strong> enough to face hardships.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q2" value="A" onchange="trackRadio(6, this)"> A. excited</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q2" value="B" onchange="trackRadio(6, this)"> B. hesistant</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q2" value="C" onchange="trackRadio(6, this)"> C. persistent</label>
+
+                <label class="essay-label"><strong>3.</strong> A true dream will become the ultimate drive that helps you overcome all <strong>obstacles</strong> on your life journey.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q3" value="A" onchange="trackRadio(6, this)"> A. barriers and challenges</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q3" value="B" onchange="trackRadio(6, this)"> B. plans and clear goals</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q3" value="C" onchange="trackRadio(6, this)"> C. simple solutions</label>
+
+                <label class="essay-label"><strong>4.</strong> Before starting any long-term project, you need to <strong>define</strong> your target clearly.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q4" value="A" onchange="trackRadio(6, this)"> A. give up</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q4" value="B" onchange="trackRadio(6, this)"> B. specify / identify</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q4" value="C" onchange="trackRadio(6, this)"> C. hesitate</label>
+
+                <label class="essay-label"><strong>5.</strong> Living a life without a proper purpose or passion can be extremely <strong>bland</strong>.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q5" value="A" onchange="trackRadio(6, this)"> A. boring and tasteless</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q5" value="B" onchange="trackRadio(6, this)"> B. sweet and complete</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.2_q5" value="C" onchange="trackRadio(6, this)"> C. intense and burning</label>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-7">
+            <div class="q-header">PART 3: ANTONYMS EXERCISE</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Task:</strong> Choose the word (A, B, or C) that is OPPOSITE in meaning to the underlined word.</label>
+                <label class="essay-label"><strong>1.</strong> His instructions were so <strong>clear</strong> that everyone could follow them without any questions.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q1" value="A" onchange="trackRadio(7, this)"> A. vague / uncertain</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q1" value="B" onchange="trackRadio(7, this)"> B. bright</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q1" value="C" onchange="trackRadio(7, this)"> C. obvious</label>
+
+                <label class="essay-label"><strong>2.</strong> When facing severe failures, many people choose to <strong>give up</strong> instead of fighting back.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q2" value="A" onchange="trackRadio(7, this)"> A. quit</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q2" value="B" onchange="trackRadio(7, this)"> B. keep going / persevere</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q2" value="C" onchange="trackRadio(7, this)"> C. surrender</label>
+
+                <label class="essay-label"><strong>3.</strong> The lecture was so <strong>boring</strong> that half of the students fell asleep within fifteen minutes.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q3" value="A" onchange="trackRadio(7, this)"> A. tasteless</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q3" value="B" onchange="trackRadio(7, this)"> B. exciting / interesting</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q3" value="C" onchange="trackRadio(7, this)"> C. mundane</label>
+
+                <label class="essay-label"><strong>4.</strong> Adding too much water made the hotpot extremely <strong>bland</strong>.</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q4" value="A" onchange="trackRadio(7, this)"> A. flavorful / rich</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q4" value="B" onchange="trackRadio(7, this)"> B. tasteless</label>
+                <label class="radio-option"><input type="radio" name="eng_p1.3_q4" value="C" onchange="trackRadio(7, this)"> C. cold</label>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-8">
+            <div class="q-header">PART 4: WRITING & CRITICAL THINKING</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Task:</strong> In the conclusion of the text, the author uses a food metaphor: “Canh nhạt thì ta cho muối cũng được, cho bột ngọt cũng được, nhưng để đậm đà thì chỉ có một.” (Translated in the text as: “If the soup is bland, we can add salt or MSG; but to make it truly flavorful, there is only one secret ingredient.”). <strong>Rewrite this sentence in English using your own words (paraphrase) to show that you understand its deeper meaning regarding youth and dreams. Your response should be between 30 – 50 words.</strong></label>
+                <textarea class="essay-input" name="eng_p1.4_paraphrase" placeholder="Write your english paragraph here..." oninput="trackInput(8, this)"></textarea>
+            </div>
+        </div>
+
+            <div class="q-header">PASSAGE 2: THE FIERCE CHILDHOOD</div>
+            <div class="q-context">When it was nearly dark, Quynh-son-ca suddenly met with an unfortunate accident. He and Mung invited each other to go outside. While jumping over a trench behind the barracks, he stepped on a sharp piece of broken glass. He let out a cry, then collapsed to the ground. Panicked, Mung ran over, lifting his friend’s foot up. His face was turning pale. The green piece of glass had pierced quite deeply right into the center of his friend's sole. He gathered all his courage to pull the piece of glass out, feeling goosebumps all over his body. Blood flowed heavily, soaking Quynh's whole foot in red and dripping down onto the ground. It was the first time Mung had seen so much blood, and it was the blood of his best friend in the world. He was so confused that his mind went completely blank. Surprisingly, Quynh was calmer, even though he was in extreme pain. He took off the calot hat on his head and handed it to Mung: “Wipe away the dirt and blood, then find something to bandage it for me.” Mung wiped until the calot hat was almost soaked through, but the blood still kept flowing without stopping. Suddenly, he jumped up as if sitting on fire and shouted loudly: “I almost forgot!” Without waiting for his friend to ask, he rushed toward the end of the garden, where there were thick banana bushes. He found and pulled down a young banana leaf tightly rolled like a green stick, and bit off a piece. He chose to bite a short section near the tip and chewed it vigorously. He spat the crushed piece of banana leaf into his palm, knelt down, lifted his friend’s foot up, and applied the chewed piece to the wound. Surprisingly, the wound stopped bleeding. Mung then tore off his parachute-cloth scarf, which he had just asked from a soldier in the second platoon this afternoon, to bandage the wound for his friend. He asked, his voice anxious and caring: “Do you feel it hurts less?” “Yes, much better,” Quynh replied, pursing his lips. […]
+He bent his back down in front of his friend: “You look like you're in a lot of pain, you can't walk alone. Let me carry you on my back into the house...”
+- Don't, - Quynh shook his head, - let me walk by myself. If you carry me, Vinh-sua will find out completely.
+- Find out what? - Mung looked at his friend in surprise.
+- Find out that I stepped on that piece of glass. If he knows, he will never let me join the attack on Le Bris’s house tonight. Vinh-sua is extremely strict with discipline.
+- But your foot is almost crippled like this, how can you go? - Mung cried out in worry.
+I knew it immediately, - Quynh pouted angrily. - Even you don't want me to go... You guys just want to have fun by yourselves, while forcing me to stay miserable at home... - Quynh’s crystal-clear, dark eyes filled with tears as if he was about to cry. 
+Loving his friend so much and fearing his anger, Mung scratched his head in confusion:
+- What should we do now?...
+- You must hide it and not let Vinh-sua know that I stepped on the piece of glass. If he knows, he will definitely report it to the captain to make me stay home.
+Alright, alright, - Mung hugged his friend's shoulders to comfort him, - I will hide it... But does your foot still hurt a lot? I'm just worried you won't be able to keep up with the unit...
+It's much better, the pain is almost gone. Your herbal medicine is better than a magic potion. Maybe the wound is already closing. 
+Quynh pointed his finger down at his painful foot and tried to force a smile. His lips, red as bright lipstick, shone in the twilight of the dense garden full of tree shadows. And to prove that the wound was about to close, Quynh jumped up once. But the moment his foot touched the ground, he let out a soft groan, his face turning pale. If Mung hadn't quickly supported him, he would have collapsed to the ground.
+It's nothing, it's nothing... - Quynh said hastily. - I was just pretending to be in pain to scare you for fun. - He turned his face away very quickly to hide his tears, which were pouring down from the intense pain. […] 
+(The Fierce Childhood, Phung Quan, Literature Publishing House, Hanoi, 2013, pp. 91-93)</div>
+            
+        <div class="question-card" id="qcard-9">
+            <div class="q-header">PART 1: READING COMPREHENSION QUESTIONS</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Task:</strong> Read the text and choose the correct answer (A, B, or C) or fill in the blank with NO MORE THAN THREE WORDS.</label>
+                <label class="essay-label"><strong>1.</strong> What happened to Quynh-son-ca behind the barracks?</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.1_q1" value="A" onchange="trackRadio(9, this)"> A. He fell into a deep trench while walking with Mung.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.1_q1" value="B" onchange="trackRadio(9, this)"> B. He stepped on a sharp piece of broken glass.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.1_q1" value="C" onchange="trackRadio(9, this)"> C. He got lost in the dark garden.</label>
+
+                <label class="essay-label" style="margin-top:15px;"><strong>2.</strong> Mung managed to stop the heavy bleeding on Quynh's foot by using ______________.</label>
+                <input type="text" class="essay-input" style="height:45px;" name="eng_p2.1_q2" oninput="trackInput(9, this)">
+
+                <label class="essay-label"><strong>3.</strong> Why did Quynh want to hide his injury from Vinh-sua?</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.1_q3" value="A" onchange="trackRadio(9, this)"> A. Because he was afraid Vinh-sua would punish him.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.1_q3" value="B" onchange="trackRadio(9, this)"> B. Because Vinh-sua was a very strict leader who would not let him join the attack.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.1_q3" value="C" onchange="trackRadio(9, this)"> C. Because he wanted to surprise Vinh-sua during the battle.</label>
+
+                <label class="essay-label"><strong>4.</strong> Quynh tried to jump up near the end of the text in order to ______________.</label>
+                <input type="text" class="essay-input" style="height:45px;" name="eng_p2.1_q4" oninput="trackInput(9, this)">
+
+                <label class="essay-label"><strong>5.</strong> What do Quynh's actions at the end of the passage show about him?</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.1_q5" value="A" onchange="trackRadio(9, this)"> A. He is very brave and determined to stay with his unit despite the pain.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.1_q5" value="B" onchange="trackRadio(9, this)"> B. He likes to play jokes and trick his best friend.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.1_q5" value="C" onchange="trackRadio(9, this)"> C. He is too proud to let Mung help him.</label>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-10">
+            <div class="q-header">PART 2: SYNONYMS IN CONTEXT</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Task:</strong> Choose the word (A, B, or C) that has the CLOSEST meaning to the underlined word/phrase.</label>
+                <label class="essay-label"><strong>1.</strong> Mung was very <strong>panicked</strong> when he saw a lot of blood on his friend's foot.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q1" value="A" onchange="trackRadio(10, this)"> A. calm</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q1" value="B" onchange="trackRadio(10, this)"> B. frightened / shocked</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q1" value="C" onchange="trackRadio(10, this)"> C. angry</label>
+
+                <label class="essay-label"><strong>2.</strong> Mung gathered his courage to <strong>pull</strong> out the piece of glass from Quynh’s foot.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q2" value="A" onchange="trackRadio(10, this)"> A. remove / take out</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q2" value="B" onchange="trackRadio(10, this)"> B. push in</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q2" value="C" onchange="trackRadio(10, this)"> C. break</label>
+
+                <label class="essay-label"><strong>3.</strong> Vinh-sua is a very <strong>strict</strong> leader, so everyone has to follow his discipline.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q3" value="A" onchange="trackRadio(10, this)"> A. rigorous / tough</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q3" value="B" onchange="trackRadio(10, this)"> B. gentle</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q3" value="C" onchange="trackRadio(10, this)"> C. kind</label>
+
+                <label class="essay-label"><strong>4.</strong> Quynh <strong>pretended</strong> to be fine because he did not want to stay at home.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q4" value="A" onchange="trackRadio(10, this)"> A. remembered</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q4" value="B" onchange="trackRadio(10, this)"> B. faked</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.2_q4" value="C" onchange="trackRadio(10, this)"> C. hoped</label>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-11">
+            <div class="q-header">PART 3: ANTONYMS IN CONTEXT</div>
+            <div class="essay-group">
+                <label class="essay-label"><strong>Task:</strong> Choose the word (A, B, or C) that is OPPOSITE in meaning to the underlined word.</label>
+                <label class="essay-label"><strong>1.</strong> 1.	Mung was very worried, but Quynh remained surprisingly <strong>calm</strong>.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.3_q1" value="A" onchange="trackRadio(11, this)"> A. quiet</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.3_q1" value="B" onchange="trackRadio(11, this)"> B. brave</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.3_q1" value="C" onchange="trackRadio(11, this)"> C. anxious / panicked</label>
+
+                <label class="essay-label"><strong>2.</strong> Quynh did not want to stay <strong>miserable</strong> at home while his friends went to fight.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.3_q2" value="A" onchange="trackRadio(11, this)"> A. sad</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.3_q2" value="B" onchange="trackRadio(11, this)"> B. happy / comfortable</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.3_q2" value="C" onchange="trackRadio(11, this)"> C. lonely</label>
+
+                <label class="essay-label"><strong>3.</strong> It was difficult to see the wound clearly in the <strong>dark</strong> garden.</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.3_q3" value="A" onchange="trackRadio(11, this)"> A. bright / light</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.3_q3" value="B" onchange="trackRadio(11, this)"> B. black</label>
+                <label class="radio-option"><input type="radio" name="eng_p2.3_q3" value="C" onchange="trackRadio(11, this)"> C. night</label>
+            </div>
+        </div>
+
+        <div class="question-card" id="qcard-12">
+            <div class="q-header">PART 4: PARAPHRASING TASK</div>
+            <div class="essay-group">
+                <label class="essay-label" style="margin-top:15px;"><strong>Task:</strong> At the end of the text, Quynh quickly turns his face away and says: “I was just pretending to be in pain to scare you.”. <strong>Rewrite this sentence or explain Quynh's action in English (30 – 40 words) to show his true reason for lying to Mung.</strong></label>
+                <textarea class="essay-input" name="eng_p2.4_paraphrase" placeholder="Write something in here..." oninput="trackInput(12, this)"></textarea>
+            </div>
+        </div>
+    `;
+}
+
+function initializeExam() {
+    const nameInp = document.getElementById('student-name').value.trim();
+    const sbdInp = document.getElementById('student-sbd').value.trim();
+
+    if(!nameInp || !sbdInp) {
+        alert("Vui lòng nhập đầy đủ thông tin Họ tên và Số báo danh!");
+        return;
+    }
+
+    examSessionData.studentName = nameInp;
+    examSessionData.studentSbd = sbdInp;
+
+    // Yêu cầu Toàn màn hình lần đầu
+    requestFullscreenSecure();
+
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('exam-interface').style.display = 'grid';
+
+    document.getElementById('display-name').innerText = "Thí sinh: " + examSessionData.studentName;
+    document.getElementById('display-sbd').innerText = "SBD: " + examSessionData.studentSbd;
+
+    document.getElementById('dynamic-questions-area').innerHTML = renderUnifiedExam();
+
+    buildNavigationGrid();
+    startExamCountdown();
+    
+    isExamActive = true;
+    setupSecurityMonitor();
+}
+
+// Hàm xử lý kích hoạt Toàn màn hình chuẩn hóa các trình duyệt
+function requestFullscreenSecure() {
+    const docElm = document.documentElement;
+    if (docElm.requestFullscreen) {
+        docElm.requestFullscreen().catch(err => console.log("Bảo mật chặn auto-fullscreen"));
+    } else if (docElm.mozRequestFullScreen) { 
+        docElm.mozRequestFullScreen();
+    } else if (docElm.webkitRequestFullscreen) { 
+        docElm.webkitRequestFullscreen();
+    } else if (docElm.msRequestFullscreen) { 
+        docElm.msRequestFullscreen();
+    }
+}
+
+function setupSecurityMonitor() {
+    // 1. Giám sát chuyển tab / rời ứng dụng bên ngoài
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden' && isExamActive && !isSystemAction) {
+            handleViolation("Rời khỏi Tab phòng thi");
+        }
+    });
+
+    window.addEventListener('blur', () => {
+        if (isExamActive && !isSystemAction) {
+            handleViolation("Mất tiêu điểm màn hình (Nhấp ra ngoài)");
+        }
+    });
+
+    // 2. SỬA ĐỔI CHÍNH: Giám sát thay đổi kích thước màn hình an toàn
+    const fullscreenEvents = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'];
+    fullscreenEvents.forEach(evt => {
+        document.addEventListener(evt, () => {
+            const isFull = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+            
+            // Nếu không ở trạng thái Toàn màn hình, bài thi đang chạy, không phải thao tác hệ thống và không trong tiến trình khôi phục
+            if (!isFull && isExamActive && !isSystemAction && !isRecovering) {
+                handleViolation("Thoát chế độ Toàn màn hình (Nhấn ESC hoặc thu nhỏ)");
+            }
+        });
+    });
+}
+
+function handleViolation(reason) {
+    examSessionData.cheatViolations++;
+    const countEl = document.getElementById('cheat-count');
+    if (countEl) countEl.innerText = examSessionData.cheatViolations + " / 3";
+
+    if (examSessionData.cheatViolations >= 3) {
+        isExamActive = false;
+        isSystemAction = true; 
+        alert(`CẢNH BÁO VI PHẠM NẶNG: Thí sinh vi phạm quy chế vượt quá 3 lần (${reason})! Hệ thống tiến hành khóa và cưỡng chế nộp bài.`);
+        executeFinalSubmit(true);
+    } else {
+        isRecovering = true; // Bật cờ chặn vòng lặp tính trùng lỗi
+        
+        // Tạo một giao diện Overlay cảnh báo đè lên màn hình bắt buộc học sinh phải click để khôi phục
+        showRecoveryModal(reason);
+    }
+}
+
+// SỬA ĐỔI CHÍNH: Tạo Modal bắt buộc click chuột để trình duyệt cho phép bật lại Fullscreen
+function showRecoveryModal(reason) {
+    // Xóa modal cũ nếu có
+    const oldModal = document.getElementById('recovery-overlay');
+    if(oldModal) oldModal.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'recovery-overlay';
+    overlay.style = `
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0, 0, 0, 0.95); z-index: 99999;
+        display: flex; justify-content: center; align-items: center; text-align: center;
+    `;
+
+    overlay.innerHTML = `
+        <div style="background: white; padding: 40px; border-radius: 12px; max-width: 500px; border-top: 6px solid #e74c3c; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <i class="fas fa-exclamation-triangle" style="font-size: 50px; color: #e74c3c; margin-bottom: 15px;"></i>
+            <h3 style="color: #1d2731; font-size: 20px; margin-bottom: 10px; font-weight:700;">PHÁT HIỆN THOÁT TOÀN MÀN HÌNH</h3>
+            <p style="color: #4a5568; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                Hành vi: <strong style="color:#e74c3c;">${reason}</strong>.<br>
+                Đây là lần vi phạm thứ <strong>${examSessionData.cheatViolations}/3</strong>. Nếu quá 3 lần, hệ thống sẽ tự động khóa bài thi ngay lập tức!
+            </p>
+            <button id="btn-recovery-trigger" style="background: #0b3c5d; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-expand"></i> QUAY LẠI MÀN HÌNH THI (BẮT BUỘC)
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Xử lý sự kiện click của thí sinh để kích hoạt lại chế độ Fullscreen hợp lệ
+    document.getElementById('btn-recovery-trigger').addEventListener('click', () => {
+        requestFullscreenSecure();
+        
+        // Chờ trình duyệt xử lý bật lại xong mới gỡ bỏ cờ chặn và xóa màn hình cảnh báo
+        setTimeout(() => {
+            overlay.remove();
+            isRecovering = false;
+        }, 300);
+    });
+}
+
+function buildNavigationGrid() {
+    const gridContainer = document.getElementById('dynamic-nav-grid');
+    gridContainer.innerHTML = "";
+    CONFIG_CARDS.forEach((cardNum) => {
+        const navBtn = document.createElement('div');
+        navBtn.className = "nav-item";
+        navBtn.id = "nav-item-" + cardNum;
+        navBtn.innerText = cardNum;
+        navBtn.onclick = function() {
+            const targetCard = document.getElementById("qcard-" + cardNum);
+            if(targetCard) targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+        gridContainer.appendChild(navBtn);
+    });
+}
+
+function trackInput(cardNumber, element) {
+    if(element.value.trim() !== "") {
+        examSessionData.answersLog[element.name] = element.value.trim();
+    } else {
+        delete examSessionData.answersLog[element.name];
+    }
+    checkCardStatus(cardNumber);
+}
+
+function trackRadio(cardNumber, element) {
+    examSessionData.answersLog[element.name] = element.value;
+    checkCardStatus(cardNumber);
+}
+
+function checkCardStatus(cardNumber) {
+    const cardEl = document.getElementById("qcard-" + cardNumber);
+    const navBtn = document.getElementById("nav-item-" + cardNumber);
+    if(!cardEl || !navBtn) return;
+
+    let isAnyAnswered = false;
+    const inputs = cardEl.querySelectorAll('textarea, input[type="radio"]:checked');
+    inputs.forEach(inp => {
+        if(inp.tagName.toLowerCase() === 'textarea' && inp.value.trim() !== "") {
+            isAnyAnswered = true;
+        }
+        if(inp.type === 'radio') {
+            isAnyAnswered = true;
+        }
+    });
+
+    if(isAnyAnswered) {
+        navBtn.classList.add('answered');
+    } else {
+        navBtn.classList.remove('answered');
+    }
+    updateProgressBar();
+}
+
+function updateProgressBar() {
+    let answeredCount = 0;
+    CONFIG_CARDS.forEach((cardNum) => {
+        const navBtn = document.getElementById("nav-item-" + cardNum);
+        if(navBtn && navBtn.classList.contains('answered')) {
+            answeredCount++;
+        }
+    });
+    let percent = Math.round((answeredCount / TOTAL_ITEMS) * 100);
+    document.getElementById('progress-text').innerText = percent + "%";
+    document.getElementById('progress-bar').style.width = percent + "%";
+}
+
+function startExamCountdown() {
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(function() {
+        if(totalSecondsLeft <= 0) {
+            clearInterval(timerInterval);
+            executeFinalSubmit(false);
+        } else {
+            totalSecondsLeft--;
+            let mins = Math.floor(totalSecondsLeft / 60);
+            let secs = totalSecondsLeft % 60;
+            document.getElementById('timer-string').innerText = 
+                (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
+        }
+    }, 1000);
+}
+
+function confirmSubmit() {
+    isSystemAction = true; 
+    let c = confirm("Bạn có chắc chắn muốn nộp bài thi lên hệ thống?");
+    if(c) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        executeFinalSubmit(false);
+    } else {
+        isSystemAction = false; 
+    }
+}
+
+function executeFinalSubmit(isForced = false) {
+    isExamActive = false; 
+    if(timerInterval) clearInterval(timerInterval);
+    
+    if (document.exitFullscreen) { document.exitFullscreen().catch(()=>{}); }
+
+    const btnSubmit = document.getElementById('submit-btn-el');
+    if(btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ĐANG ĐỒNG BỘ DỮ LIỆU...`;
+    }
+
+    // TỐI ƯU HÓA ĐẦU RA: Phân tách rõ ràng số lần vi phạm để ghi nhận vào Trang tính
+    const payload = {
+        studentName: examSessionData.studentName,
+        studentSbd: examSessionData.studentSbd,
+        answers: JSON.stringify(examSessionData.answersLog),
+        timestamp: new Date().toLocaleString("vi-VN"),
+        violationsCount: examSessionData.cheatViolations, // Gửi số lần vi phạm thực tế (Ví dụ: 0, 1, 2, 3)
+        violationsStatus: isForced ? "BỊ CƯỠNG CHẾ (Quá 3 lần vi phạm)" : `Nộp bài hợp lệ (Vi phạm ${examSessionData.cheatViolations} lần)`
+    };
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(() => {
+        showFinishScreen(true, isForced);
+    })
+    .catch((error) => {
+        console.error("Lỗi mạng: ", error);
+        showFinishScreen(false, isForced);
+    });
+}
+
+function showFinishScreen(isSuccess, isForced) {
+    document.getElementById('exam-interface').style.display = 'none';
+    
+    const finishScreen = document.getElementById('finish-screen');
+    finishScreen.style.display = 'block';
+    const finishBox = document.getElementById('finish-box');
+    
+    const statusTitle = isForced ? "BÀI THI BỊ KHÓA DO VI PHẠM QUY ĐỊNH THI" : "NỘP BÀI THI THÀNH CÔNG";
+    const badgeIcon = isForced ? "fas fa-exclamation-triangle" : "fas fa-check-circle";
+    const customStyle = isForced ? "color: #e74c3c" : "color: #2ecc71";
+    const boxBorder = isForced ? "border-color: #e74c3c; background: #fff5f5;" : "border-color: #2ecc71;";
+
+    finishBox.innerHTML = `
+        <div style="margin-bottom: 20px;">
+            <i class="${badgeIcon}" style="font-size: 65px; ${customStyle}"></i>
+        </div>
+        <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 15px; ${isForced ? 'color:#e74c3c;' : 'color:#0b3c5d;'}">${statusTitle}</h2>
+        <p style="color: #4a5568; font-size: 14.5px;">Hệ thống Khảo thí trực tuyến Hi.lng Education đã đồng bộ dữ liệu của bạn.</p>
+        
+        <div class="finish-info-box" style="${boxBorder}">
+            <div class="finish-info-line">
+                <strong>Họ tên thí sinh:</strong>
+                <span>${examSessionData.studentName}</span>
+            </div>
+            <div class="finish-info-line">
+                <strong>Số báo danh (SBD):</strong>
+                <span>${examSessionData.studentSbd}</span>
+            </div>
+            <div class="finish-info-line">
+                <strong>Trạng thái giám sát:</strong>
+                <span style="font-weight: 700;">${isForced ? 'Vi phạm quy chế (Quá 3 lần thoát/chuyển vị trí)' : 'Hợp lệ'}</span>
+            </div>
+            <div class="finish-info-line">
+                <strong>Kết nối máy chủ:</strong>
+                <span style="color: #2ecc71; font-weight: 600;">CONNECTED</span>
+            </div>
+        </div>
+        <p style="font-size: 12px; color: #a0aec0; margin-top: 20px;">Thí sinh vui lòng báo giám thị trước khi đóng trình duyệt. Mọi hành động gian lận đã được lưu vết tự động.</p>
+    `;
+}
+    </script>
+</body>
+</html>
