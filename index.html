@@ -474,7 +474,7 @@ It's nothing, it's nothing... - Quynh said hastily. - I was just pretending to b
             <div class="q-header">PART 3: ANTONYMS IN CONTEXT</div>
             <div class="essay-group">
                 <label class="essay-label"><strong>Task:</strong> Choose the word (A, B, or C) that is OPPOSITE in meaning to the underlined word.</label>
-                <label class="essay-label"><strong>1.</strong> 1.	Mung was very worried, but Quynh remained surprisingly <strong>calm</strong>.</label>
+                <label class="essay-label"><strong>1.</strong> Mung was very worried, but Quynh remained surprisingly <strong>calm</strong>.</label>
                 <label class="radio-option"><input type="radio" name="eng_p2.3_q1" value="A" onchange="trackRadio(11, this)"> A. quiet</label>
                 <label class="radio-option"><input type="radio" name="eng_p2.3_q1" value="B" onchange="trackRadio(11, this)"> B. brave</label>
                 <label class="radio-option"><input type="radio" name="eng_p2.3_q1" value="C" onchange="trackRadio(11, this)"> C. anxious / panicked</label>
@@ -739,13 +739,12 @@ function executeFinalSubmit(isForced = false) {
         btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ĐANG ĐỒNG BỘ DỮ LIỆU...`;
     }
 
-    // TỐI ƯU HÓA ĐẦU RA: Phân tách rõ ràng số lần vi phạm để ghi nhận vào Trang tính
     const payload = {
         studentName: examSessionData.studentName,
         studentSbd: examSessionData.studentSbd,
         answers: JSON.stringify(examSessionData.answersLog),
         timestamp: new Date().toLocaleString("vi-VN"),
-        violationsCount: examSessionData.cheatViolations, // Gửi số lần vi phạm thực tế (Ví dụ: 0, 1, 2, 3)
+        violationsCount: examSessionData.cheatViolations, 
         violationsStatus: isForced ? "BỊ CƯỠNG CHẾ (Quá 3 lần vi phạm)" : `Nộp bài hợp lệ (Vi phạm ${examSessionData.cheatViolations} lần)`
     };
 
@@ -759,7 +758,7 @@ function executeFinalSubmit(isForced = false) {
         showFinishScreen(true, isForced);
     })
     .catch((error) => {
-        console.error("Lỗi mạng: ", error);
+        console.error("Lỗi mạng đồng bộ: ", error);
         showFinishScreen(false, isForced);
     });
 }
@@ -770,39 +769,109 @@ function showFinishScreen(isSuccess, isForced) {
     const finishScreen = document.getElementById('finish-screen');
     finishScreen.style.display = 'block';
     const finishBox = document.getElementById('finish-box');
+    const emergencyBox = document.getElementById('emergency-box');
     
-    const statusTitle = isForced ? "BÀI THI BỊ KHÓA DO VI PHẠM QUY ĐỊNH THI" : "NỘP BÀI THI THÀNH CÔNG";
-    const badgeIcon = isForced ? "fas fa-exclamation-triangle" : "fas fa-check-circle";
-    const customStyle = isForced ? "color: #e74c3c" : "color: #2ecc71";
-    const boxBorder = isForced ? "border-color: #e74c3c; background: #fff5f5;" : "border-color: #2ecc71;";
+    if (isSuccess) {
+        const statusTitle = isForced ? "BÀI THI BỊ KHÓA DO VI PHẠM QUY ĐỊNH THI" : "NỘP BÀI THI THÀNH CÔNG";
+        const badgeIcon = isForced ? "fas fa-exclamation-triangle" : "fas fa-check-circle";
+        const customStyle = isForced ? "color: #e74c3c" : "color: #2ecc71";
+        const boxBorder = isForced ? "border-color: #e74c3c; background: #fff5f5;" : "border-color: #2ecc71;";
 
-    finishBox.innerHTML = `
-        <div style="margin-bottom: 20px;">
-            <i class="${badgeIcon}" style="font-size: 65px; ${customStyle}"></i>
-        </div>
-        <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 15px; ${isForced ? 'color:#e74c3c;' : 'color:#0b3c5d;'}">${statusTitle}</h2>
-        <p style="color: #4a5568; font-size: 14.5px;">Hệ thống Khảo thí trực tuyến Hi.lng Education đã đồng bộ dữ liệu của bạn.</p>
+        finishBox.innerHTML = `
+            <div style="margin-bottom: 20px;">
+                <i class="${badgeIcon}" style="font-size: 65px; ${customStyle}"></i>
+            </div>
+            <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 15px; ${isForced ? 'color:#e74c3c;' : 'color:#0b3c5d;'}">${statusTitle}</h2>
+            <p style="color: #4a5568; font-size: 14.5px;">Hệ thống Khảo thí trực tuyến Hi.lng Education đã đồng bộ dữ liệu của bạn.</p>
+            
+            <div class="finish-info-box" style="${boxBorder}">
+                <div class="finish-info-line">
+                    <strong>Họ tên thí sinh:</strong>
+                    <span>${examSessionData.studentName}</span>
+                </div>
+                <div class="finish-info-line">
+                    <strong>Số báo danh (SBD):</strong>
+                    <span>${examSessionData.studentSbd}</span>
+                </div>
+                <div class="finish-info-line">
+                    <strong>Trạng thái giám sát:</strong>
+                    <span style="font-weight: 700;">${isForced ? 'Vi phạm quy chế (Quá 3 lần thoát/chuyển vị trí)' : 'Hợp lệ'}</span>
+                </div>
+                <div class="finish-info-line">
+                    <strong>Kết nối máy chủ:</strong>
+                    <span style="color: #2ecc71; font-weight: 600;">CONNECTED</span>
+                </div>
+            </div>
+            <p style="font-size: 12px; color: #a0aec0; margin-top: 20px;">Thí sinh vui lòng báo giám thị trước khi đóng trình duyệt. Mọi hành động gian lận đã được lưu vết tự động.</p>
+        `;
+        if (emergencyBox) emergencyBox.style.display = 'none';
+    } else {
+        finishBox.innerHTML = `
+            <div style="margin-bottom: 20px;"><i class="fas fa-wifi" style="font-size: 65px; color: #e74c3c;"></i></div>
+            <h2 style="font-size: 22px; font-weight: 700; color: #e74c3c; margin-bottom: 15px;">MẤT KẾT NỐI MÁY CHỦ DO GẶP SỰ CỐ</h2>
+            <p style="color: #4a5568; font-size: 14px; line-height: 1.6;">
+                Hệ thống không thể đóng gói đồng bộ dữ liệu về hội đồng khảo thí do lỗi đường truyền mạng hoặc sự cố kỹ thuật từ máy chủ hội đồng thi.
+            </p>
+        `;
         
-        <div class="finish-info-box" style="${boxBorder}">
-            <div class="finish-info-line">
-                <strong>Họ tên thí sinh:</strong>
-                <span>${examSessionData.studentName}</span>
-            </div>
-            <div class="finish-info-line">
-                <strong>Số báo danh (SBD):</strong>
-                <span>${examSessionData.studentSbd}</span>
-            </div>
-            <div class="finish-info-line">
-                <strong>Trạng thái giám sát:</strong>
-                <span style="font-weight: 700;">${isForced ? 'Vi phạm quy chế (Quá 3 lần thoát/chuyển vị trí)' : 'Hợp lệ'}</span>
-            </div>
-            <div class="finish-info-line">
-                <strong>Kết nối máy chủ:</strong>
-                <span style="color: #2ecc71; font-weight: 600;">CONNECTED</span>
-            </div>
-        </div>
-        <p style="font-size: 12px; color: #a0aec0; margin-top: 20px;">Thí sinh vui lòng báo giám thị trước khi đóng trình duyệt. Mọi hành động gian lận đã được lưu vết tự động.</p>
-    `;
+if (emergencyBox) {
+            emergencyBox.style.display = 'block';
+            document.getElementById('btn-download-txt').onclick = function() {
+                exportEmergencyTxtFile();
+            };
+        }
+    }
+}
+
+function exportEmergencyTxtFile() {
+    const timestamp = new Date().toLocaleString("vi-VN");
+    
+    let txtContent = `==================================================================\n`;
+    txtContent += `       HỆ THỐNG KHẢO THÍ TRỰC TUYẾN HI.LNG EDUCATION             \n`;
+    txtContent += `             BIÊN BẢN LƯU TRỮ BÀI LÀM KHẨN CẤP                    \n`;
+    txtContent += `==================================================================\n\n`;
+    
+    txtContent += `[1. THÔNG TIN THÍ SINH]\n`;
+    txtContent += `- Họ và tên thí sinh : ${examSessionData.studentName}\n`;
+    txtContent += `- Số báo danh (SBD)  : ${examSessionData.studentSbd}\n`;
+    txtContent += `- Thời gian xuất file: ${timestamp}\n\n`;
+    
+    txtContent += `[2. LỊCH SỬ GIÁM SÁT AN NINH]\n`;
+    txtContent += `- Số lần thoát/rời màn hình: ${examSessionData.cheatViolations} / 3 lần\n`;
+    txtContent += `- Trạng thái ghi nhận      : Dữ liệu cứu hộ cục bộ (Local Storage Dump)\n\n`;
+    
+    txtContent += `==================================================================\n`;
+    txtContent += `[3. CHI TIẾT NỘI DUNG BÀI LÀM]\n`;
+    txtContent += `==================================================================\n\n`;
+    
+    const logs = examSessionData.answersLog;
+    if (Object.keys(logs).length === 0) {
+        txtContent += `(Cảnh báo từ hệ thống: Không tìm thấy dữ liệu câu trả lời nào được ghi nhận trong phiên làm bài này!)\n`;
+    } else {
+        for (const key in logs) {
+            if (logs.hasOwnProperty(key)) {
+                txtContent += `👉 MÃ CÂU HỎI [${key.toUpperCase()}]:\n`;
+                txtContent += `--------------------------------------------------\n`;
+                txtContent += `${logs[key]}\n`;
+                txtContent += `--------------------------------------------------\n\n`;
+            }
+        }
+    }
+    
+    txtContent += `\n==================================================================\n`;
+    txtContent += `XÁC THỰC: Biên bản này chứa toàn bộ lịch sử câu trả lời tạm thời trên trình duyệt của thí sinh. Thí sinh không tự ý chỉnh sửa nội dung file TXT này trước khi gửi cho Hội đồng thi để tránh làm sai lệch cấu trúc dữ liệu.\n`;
+    txtContent += `==================================================================`;
+
+    const blob = new Blob([txtContent], { type: "text/plain;charset=utf-8" });
+    const link = document.createElement("a");
+    const fileName = `BAI_LAM_CUU_HO_${examSessionData.studentSbd}_${examSessionData.studentName.replace(/\s+/g, '_')}.txt`;
+    
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
     </script>
 </body>
